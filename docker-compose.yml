@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - parkwise_redis_data:/data
+volumes:
+  parkwise_redis_data:

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ParkWise | 管理員後台</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/admin.js" defer></script>
+</head>
+<body class="admin-body">
+  <div class="admin-container">
+    <a class="back-link" href="/">← 返回停車場總覽</a>
+    <div class="admin-header"><div class="logo-square">P</div><div><p class="eyebrow">PARKWISE / SYSTEM ADMIN</p><h1>停車場管理員後台</h1><p class="subtitle">管理本次模擬測試，檢查 Redis 即時統計。</p></div></div>
+    <div class="admin-layout">
+      <section class="panel">
+        <div class="section-top"><div><p class="eyebrow">RESET ENVIRONMENT</p><h2>重設測試資料</h2></div></div>
+        <p class="muted line-height">重設後會恢復 A 區 12 格、B 區 8 格，並清除目前的車輛、累計統計和 Redis Streams 進出紀錄。此操作無法復原。</p>
+        <form id="resetForm" class="action-form">
+          <label for="adminToken">管理員密碼（.env 的 ADMIN_TOKEN）</label>
+          <input id="adminToken" type="password" autocomplete="off" placeholder="輸入管理員密碼" required />
+          <button class="danger-btn" type="submit">重設全部模擬資料</button>
+        </form>
+        <div id="adminToast" class="toast hidden" role="status" aria-live="polite"></div>
+      </section>
+      <section class="panel">
+        <div class="section-top"><div><p class="eyebrow">REDIS METRICS</p><h2>即時數據</h2></div></div>
+        <div class="admin-stat"><span>停放中 / 總車位</span><strong id="adminOccupied">-- / 20</strong></div>
+        <div class="admin-stat"><span>累計成功入場</span><strong id="adminEntries">--</strong></div>
+        <div class="admin-stat"><span>累計離場</span><strong id="adminExits">--</strong></div>
+        <div class="admin-stat"><span>因滿位拒絕</span><strong id="adminFull">--</strong></div>
+        <div class="admin-stat"><span>車牌重複拒絕</span><strong id="adminDuplicate">--</strong></div>
+        <div class="admin-stat"><span>累計營收</span><strong id="adminRevenue">NT$ --</strong></div>
+        <p class="small-print">全部資料由 Redis Hash、Sorted Set 和 Streams 提供。</p>
+      </section>
+    </div>
+    <section class="panel command-panel"><div><p class="eyebrow">CLI REFERENCE</p><h2>課堂示範 Redis 指令</h2></div>
+      <pre><code>docker compose exec redis redis-cli ZCARD parkwise:free:A
+docker compose exec redis redis-cli ZCARD parkwise:free:B
+docker compose exec redis redis-cli HLEN parkwise:occupied
+docker compose exec redis redis-cli HGETALL parkwise:metrics
+docker compose exec redis redis-cli XLEN parkwise:events
+docker compose exec redis redis-cli XREVRANGE parkwise:events + - COUNT 5</code></pre>
+    </section>
+  </div>
+</body>
+</html>

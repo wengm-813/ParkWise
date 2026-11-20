@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: parkwise-demo
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --threads 16 --worker-class gthread --timeout 120 --bind 0.0.0.0:$PORT wsgi:app
+    envVars:
+      - key: REDIS_URL
+        sync: false
+      - key: ADMIN_TOKEN
+        generateValue: true
